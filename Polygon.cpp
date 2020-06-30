@@ -67,14 +67,12 @@ bool checkInside(Point poly[], int n, Point p) {
    int main() {
    // line polygon = {{{0,0},{10,0}},{{10,0},{10,10}},{{10,10},{0,10}},{{0,10},{0,0}}};
 
-     //Case 1 :
      Point polygon[] = {{0, 0}, {10, 0}, {10, 10}, {0, 10}};
-     Point p = {5, 3};
+     Point p = {5, 3}; //Point will lies inside
      int n = 4;
 
-     //Case 2 :
      // Point polygon[] = {{-3, 2}, {-2, -0.8}, {0, 1.2}, {2.2, 0}};
-     //Point p = {0, 0};
+     //Point p = {0, 0};  //Point will lies outside
      //int n = 4;
 
      if(checkInside(polygon, n, p))
