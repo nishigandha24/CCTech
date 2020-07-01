@@ -23,7 +23,7 @@ bool onLine(Line line, Point point)
     return false;
 }
 
-//to check the orientation of points as if they are in colinear, clockwise or anti-clockwise direction
+//check the orientation of points as if they are in colinear, clockwise or anti-clockwise direction
 int path(Point a, Point b, Point c) 
 {
   int val = (b.y-a.y)*(c.x-b.x)-(b.x-a.x)*(c.y-b.y);
@@ -35,7 +35,7 @@ int path(Point a, Point b, Point c)
 }
 
 
-// to check whether the lines intersects or not
+//check whether the lines intersects or not
 bool isIntersect(Line line1, Line line2) 
 {
   //four path for two lines and points of other line
@@ -57,8 +57,8 @@ bool isIntersect(Line line1, Line line2)
   return false;
 }
 
-//to check whether point lies inside polygon or not
-bool checkInside(Point polygon[], int n, Point point) 
+//check whether point lies inside or outside a polygon
+bool isInside(Point polygon[], int n, Point point) 
 {
   if(n < 3)
     return false;   //when polygon has less than 3 edges, then it is not polygon
@@ -91,7 +91,7 @@ int main()
   //Point p = {0, 0};  //Point p will lies outside
   //int n = 5;
 
-  if(checkInside(polygon, n, p))
+  if(isInside(polygon, n, p))
     cout << "True"; //True if Point p lies inside.
   else
     cout << "False"; //False if Point p lies outside.
