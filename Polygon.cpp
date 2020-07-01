@@ -1,80 +1,98 @@
 #include<iostream>
 using namespace std;
 
-struct Point {
+//structure Point consisting the coordinates of polygon in 2-D
+struct Point 
+{
  float x, y;
 };
 
-struct line {
+//structure Line
+struct Line 
+{
  Point p1, p2;
 };
 
-bool onLine(line l1, Point p) {        //check whether p is on the line or not
- if(p.x <= max(l1.p1.x, l1.p2.x) && p.x <= min(l1.p1.x, l1.p2.x) &&
-  (p.y <= max(l1.p1.y, l1.p2.y) && p.y <= min(l1.p1.y, l1.p2.y)))
-  return true;
-
-return false;
+//check whether point is on the line or not
+bool onLine(Line line, Point point) 
+{      
+  if(point.x <= max(line.p1.x, line.p2.x) && point.x <= min(line.p1.x, line.p2.x) &&
+    (point.y <= max(line.p1.y, line.p2.y) && point.y <= min(line.p1.y, line.p2.y)))
+    return true;
+  else
+    return false;
 }
 
-int direction(Point a, Point b, Point c) {
- int val = (b.y-a.y)*(c.x-b.x)-(b.x-a.x)*(c.y-b.y);
- if (val == 0)
-      return 0;           //colinear
-    else if(val < 0)
-      return 2;          //anti-clockwise direction
-      return 1;          //clockwise direction
-    }
+//to check the orientation of points as if they are in colinear, clockwise or anti-clockwise direction
+int path(Point a, Point b, Point c) 
+{
+  int val = (b.y-a.y)*(c.x-b.x)-(b.x-a.x)*(c.y-b.y);
+  if (val == 0)
+    return 0;          //colinear
+  else if(val < 0)
+    return 1;          //clockwise direction
+    return 2;          //anti-clockwise direction
+}
 
-    bool isIntersect(line l1, line l2) {
-   //four direction for two lines and points of other line
-      int dir1 = direction(l1.p1, l1.p2, l2.p1);
-      int dir2 = direction(l1.p1, l1.p2, l2.p2);
-      int dir3 = direction(l2.p1, l2.p2, l1.p1);
-      int dir4 = direction(l2.p1, l2.p2, l1.p2);
 
-      if(dir1 != dir2 && dir3 != dir4)
-      return true;           //they are intersecting
-   if(dir1==0 && onLine(l1, l2.p1))        //when p2 of line2 are on the line1
+// to check whether the lines intersects or not
+bool isIntersect(Line line1, Line line2) 
+{
+  //four path for two lines and points of other line
+  int path1 = path(line1.p1, line1.p2, line2.p1);
+  int path2 = path(line1.p1, line1.p2, line2.p2);
+  int path3 = path(line2.p1, line2.p2, line1.p1);
+  int path4 = path(line2.p1, line2.p2, line1.p2);
+
+  if(path1 != path2 && path3 != path4)
+    return true;           //lines are intersecting
+  if(path1==0 && onLine(line1, line2.p1))        //when p2 of line2 are on the line1
     return true;
-   if(dir2==0 && onLine(l1, l2.p2))         //when p1 of line2 are on the line1
+  if(path2==0 && onLine(line1, line2.p2))        //when p1 of line2 are on the line1
     return true;
-   if(dir3==0 && onLine(l2, l1.p1))       //when p2 of line1 are on the line2
+  if(path3==0 && onLine(line2, line1.p1))        //when p2 of line1 are on the line2
     return true;
-   if(dir4==0 && onLine(l2, l1.p2)) //when p1 of line1 are on the line2
+  if(path4==0 && onLine(line2, line1.p2))        //when p1 of line1 are on the line2
     return true;
   return false;
 }
 
-bool checkInside(Point poly[], int n, Point p) {
- if(n < 3)
-      return false;                  //when polygon has less than 3 edge, it is not polygon
-   line exline = {p, {9999, p.y}};   //create a point at infinity, y is same as point p
-   int count = 0;
-   int i = 0;
-   do {
-      line side = {poly[i], poly[(i+1)%n]};     //forming a line from two consecutive points of poly
-      if(isIntersect(side, exline)) {          //if side is intersects exline
-       if(direction(side.p1, p, side.p2) == 0)
-        return onLine(side, p);
+//to check whether point lies inside polygon or not
+bool checkInside(Point polygon[], int n, Point point) 
+{
+  if(n < 3)
+    return false;   //when polygon has less than 3 edges, then it is not polygon
+
+  int count = 0, i = 0;
+  Line exline = {point, {9999, point.y}};  //create a line at infinity, y is same as point
+
+  do 
+  {
+    Line side = {polygon[i], polygon[(i+1)%n]}; //forming a line from two consecutive points of polygon
+    if(isIntersect(side, exline)) 
+    {          
+      //if side intersects exline
+      if(path(side.p1, point, side.p2) == 0)
+        return onLine(side, point);
       count++;
     }
-    i = (i+1)%n;
+    i = (i+1) % n;
   } while(i != 0);
-      return count&1;             //when count is odd
-    }
+  return count%2 == 1;  // if count is oddwhen count is odd
+}
 
-    int main() {
-     Point polygon[] = {{1,0}, {8,3}, {8,8}, {1,5}};
-     Point p = {3,5}; //Point will lies inside
-     int n = 4;
+int main() 
+{
+  Point polygon[] = {{1,0}, {8,3}, {8,8}, {1,5}};
+  Point p = {3,5}; //Point p will lies inside
+  int n = 4;
 
-     // Point polygon[] = {{-3, 2}, {-2, -0.8}, {0, 1.2}, {2.2, 0}, {2,4.5}};
-     //Point p = {0, 0};  //Point will lies outside
-     //int n = 5;
+  //Point polygon[] = {{-3, 2}, {-2, -0.8}, {0, 1.2}, {2.2, 0}, {2,4.5}};
+  //Point p = {0, 0};  //Point p will lies outside
+  //int n = 5;
 
-     if(checkInside(polygon, n, p))
-         cout << "True"; //Point lies inside.
-       else
-         cout << "False"; //Point lies outside.
-     }
+  if(checkInside(polygon, n, p))
+    cout << "True"; //True if Point p lies inside.
+  else
+    cout << "False"; //False if Point p lies outside.
+}
